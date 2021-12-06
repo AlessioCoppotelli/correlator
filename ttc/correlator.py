@@ -25,7 +25,7 @@ def time_delay_calculator(signal_1,signal_2) :
     len_1 = len(signal_1)
     len_2 = len(signal_2)
     points = len_1
-    frequency = 0.5
+    frequency = 1
     T = 1/frequency
     duration = 10.0
     T_in_duration = duration/T
@@ -83,15 +83,18 @@ if __name__ == '__main__' :
     plot_yn = 'Yes'
 
     amplitude = 5.0
-    frequency = 0.5
+    frequency = 1
     duration = 10.0
-    points = 50000
+    points = 1000
     phi_0_1 = 0.0
 
 
     time_delay = 0.2
     #bitsequence = [round(random()) for x in range(points)]
-    bitsequence = [0 for x in range(points)]
+    mod_idx = np.pi/4.0
+    bitsequence = [round(random()) for x in range(int(points/5))]
+    bit_per_sample = 5
+
 
 
     phi_0_2 = 0.0
@@ -111,8 +114,10 @@ if __name__ == '__main__' :
     signal_1.set_initialphase(phi_0_1)
     signal_1.set_points_number(points)
     signal_1.set_mod_index(np.pi/4.0)
-    signal_1.set_bitsequence(bitsequence)
     signal_1.set_time_list()
+    signal_1.set_modulation = 'BPSK'
+    signal_1.set_mod_index(mod_idx)
+    signal_1.set_bitsequence(bitsequence,bit_per_sample)
     signal_1.simulate_signal()
 
 
@@ -124,8 +129,10 @@ if __name__ == '__main__' :
     signal_2.set_time_delay(time_delay)
     signal_2.set_points_number(points)
     signal_2.set_mod_index(np.pi/4.0)
-    signal_2.set_bitsequence(bitsequence)
     signal_2.set_time_list()
+    signal_2.set_modulation = 'BPSK'
+    signal_2.set_mod_index(mod_idx)
+    signal_2.set_bitsequence(bitsequence,bit_per_sample)
     signal_2.simulate_signal()
 
     if add_noise == 'Yes' :

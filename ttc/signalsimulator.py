@@ -96,7 +96,6 @@ class signal_simulator :
             self.time_list = None
 
 
-
     def set_time_delay(self,time_delay) :
         self.time_delay = self.value_control(time_delay,'Time delay',minval=None)
 
@@ -116,11 +115,25 @@ class signal_simulator :
     def set_bitrate(self,bit_rate) :
         self.bit_rate = bit_rate
 
-    def set_bitsequence(self,bitsequence) :
-        self.bitsequence = bitsequence
+    def set_bitsequence(self,bitsequence,data_per_sample) :
+        bit_seq = []
+        for i in bitsequence :
+            bit_seq = bit_seq + [i for j in range(data_per_sample) ]
+        delta_len = len(bit_seq) - len(self.time_array)
+        if delta_len > 0 :
+            # levare dati da bit_seq
+            del bit_seq[-delta_len:-1]
+        elif delta_len < 0 :
+            # aggiungere 0 alla fine di bit_seq
+            bit_seq = bit_seq + [0 for j in range(-delta_len)]
+        
+            
+
+        self.bitsequence = bit_seq
+
 
     def set_mod_index(self,mod_idx) :
-        self.mod_index = self.value_control(mod_idx,'Modulation Index')
+        self.mod_index = mod_idx
 
     def simulate_signal(self) :
         if self.amplitude is not None and self.frequency is not None and self.time_array is not None :
@@ -140,7 +153,7 @@ class signal_simulator :
                 if self.mod_index is not None and self.bitsequence is not None:
                     print('  modulated signal')
                     mod_idx = self.mod_index
-                    print('    mod_idx : ',mod_idx)
+                    print('        with mod_idx : ',mod_idx)
                     m_t = np.array(self.bitsequence)
                     s = A * np.sin( 2*np.pi*freq*(t+delay) + phi_0 +mod_idx* m_t)
                 else :
@@ -188,7 +201,9 @@ if __name__ == '__main__' :
     duration = 10.0
     phi_0 = 0.0
     points = 1000
-    bitsequence = [round(random()) for x in range(points)]
+    mod_idx = np.pi/4.0
+    bitsequence = [round(random()) for x in range(int(points/5))]
+    bit_per_sample = 5
 
     signal.set_amplitude(amplitude)
     signal.set_frequency(frequency)
@@ -196,6 +211,9 @@ if __name__ == '__main__' :
     signal.set_initialphase(phi_0)
     signal.set_points_number(points)
     signal.set_time_list()
+    signal.set_modulation = 'BPSK'
+    signal.set_mod_index(mod_idx)
+    signal.set_bitsequence(bitsequence,bit_per_sample)
 
     signal.simulate_signal()
 
